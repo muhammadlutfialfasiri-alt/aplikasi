@@ -2178,7 +2178,17 @@
            1. INITIAL STATE & MOCK DATA (VSCODE READY)
            ========================================================================== */
         const DANA_NUMBER = "081371236782";
-        const WHATSAPP_NUMBER = "081371236782";
+        const WHATSAPP_NUMBER = "6281371236782"; // format Indonesia (+62), tanpa angka 0 di depan
+        // Buka WhatsApp langsung: HP -> aplikasi WhatsApp (wa.me), komputer -> WhatsApp Web langsung ke chat (tanpa halaman perantara)
+        function openWhatsApp(encodedText) {
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const url = isMobile
+                ? `https://wa.me/${WHATSAPP_INTL}?text=${encodedText}`
+                : `https://web.whatsapp.com/send?phone=${WHATSAPP_INTL}&text=${encodedText}`;
+            const w = window.open(url, '_blank');
+            if (!w) window.location.href = url; // jika popup diblokir, buka di tab ini
+        }
+
         // Link WhatsApp wajib format internasional tanpa 0 di depan (0813... -> 62813...)
         const WHATSAPP_INTL = (function(n){
             n = String(n).replace(/\D/g, '');
@@ -2856,7 +2866,7 @@ const PRODUCTS_KEY = 'animal_artbook_products_v2'; // kunci baru: abaikan data p
 
             // Open WhatsApp direct link
             setTimeout(() => {
-                window.open(`https://wa.me/${WHATSAPP_INTL}?text=${message}`, '_blank');
+                openWhatsApp(message);
                 navigateTo('notifications');
             }, 1200);
         }
@@ -2903,7 +2913,7 @@ const PRODUCTS_KEY = 'animal_artbook_products_v2'; // kunci baru: abaikan data p
 
         function openChatAdmin() {
             const msg = encodeURIComponent(`Halo Admin Animal Artbook (081371236782), saya ingin bertanya mengenai katalog buku gambar.`);
-            window.open(`https://wa.me/${WHATSAPP_INTL}?text=${msg}`, '_blank');
+            openWhatsApp(msg);
         }
 
         /* ==========================================================================
