@@ -2179,6 +2179,13 @@
            ========================================================================== */
         const DANA_NUMBER = "081371236782";
         const WHATSAPP_NUMBER = "081371236782";
+        // Link WhatsApp wajib format internasional tanpa 0 di depan (0813... -> 62813...)
+        const WHATSAPP_INTL = (function(n){
+            n = String(n).replace(/\D/g, '');
+            if (n.startsWith('0')) return '62' + n.slice(1);
+            if (n.startsWith('62')) return n;
+            return '62' + n;
+        })(WHATSAPP_NUMBER);
 
         // Categories specified in prompt
         const categories = ["Semua Produk", "Hewan", "Kendaraan", "Tumbuhan", "Elektronik", "Lain-lain"];
@@ -2818,13 +2825,13 @@ const PRODUCTS_KEY = 'animal_artbook_products_v2'; // kunci baru: abaikan data p
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
             // Format WhatsApp Message
-            let itemsText = cart.map(i => `- ${i.title} (${i.qty}x) = Rp ${(i.price * i.qty).toLocaleString('id-ID')}`).join('%0A');
+            let itemsText = cart.map(i => encodeURIComponent(`- ${i.title} (${i.qty}x) = Rp ${(i.price * i.qty).toLocaleString('id-ID')}`)).join('%0A');
             
             let message = `*PESANAN BARU ANIMAL ARTBOOK*%0A` +
                           `----------------------------------%0A` +
-                          `*Nama Pembeli:* ${currentUser.fullname || currentUser.username}%0A` +
-                          `*Nomor HP:* ${currentUser.phone || 'Belum Diisi'}%0A` +
-                          `*Alamat COD/Kirim:* ${currentUser.address || 'Belum Diisi'}%0A` +
+                          `*Nama Pembeli:* ${encodeURIComponent(currentUser.fullname || currentUser.username)}%0A` +
+                          `*Nomor HP:* ${encodeURIComponent(currentUser.phone || 'Belum Diisi')}%0A` +
+                          `*Alamat COD/Kirim:* ${encodeURIComponent(currentUser.address || 'Belum Diisi')}%0A` +
                           `----------------------------------%0A` +
                           `*Daftar Buku Gambar:*%0A${itemsText}%0A` +
                           `----------------------------------%0A` +
@@ -2849,7 +2856,7 @@ const PRODUCTS_KEY = 'animal_artbook_products_v2'; // kunci baru: abaikan data p
 
             // Open WhatsApp direct link
             setTimeout(() => {
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+                window.open(`https://wa.me/${WHATSAPP_INTL}?text=${message}`, '_blank');
                 navigateTo('notifications');
             }, 1200);
         }
@@ -2896,7 +2903,7 @@ const PRODUCTS_KEY = 'animal_artbook_products_v2'; // kunci baru: abaikan data p
 
         function openChatAdmin() {
             const msg = encodeURIComponent(`Halo Admin Animal Artbook (081371236782), saya ingin bertanya mengenai katalog buku gambar.`);
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
+            window.open(`https://wa.me/${WHATSAPP_INTL}?text=${msg}`, '_blank');
         }
 
         /* ==========================================================================
